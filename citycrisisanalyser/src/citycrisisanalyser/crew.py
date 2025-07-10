@@ -8,13 +8,15 @@ import yaml
 import os
 
 
+base_path = os.path.dirname(os.path.abspath(__file__))
+pdf_path = os.path.join(base_path, '..', '..', '..', 'knowledge', '21_Laws_of_AI_Solutions_Architecture.pdf')
 pdf_search_tool = PDFSearchTool(
-  pdf='knowledge/21_Laws_of_AI_Solutions_Architecture.pdf',
-  config=dict(
+    pdf=pdf_path,
+    config=dict(
         llm=dict(
             provider="ollama",
             config=dict(
-                model="gemma2",
+                model="llama3.2:3b",
                 
             ),
         ),
