@@ -8,15 +8,13 @@ import yaml
 import os
 
 
-base_path = os.path.dirname(os.path.abspath(__file__))
-pdf_path = os.path.join(base_path, '..', '..', '..', 'knowledge', '21_Laws_of_AI_Solutions_Architecture.pdf')
 pdf_search_tool = PDFSearchTool(
-    pdf=pdf_path,
-    config=dict(
+  pdf='knowledge/21_Laws_of_AI_Solutions_Architecture.pdf',
+  config=dict(
         llm=dict(
             provider="ollama",
             config=dict(
-                model="llama3.2:3b",
+                model="llama3.2:1b",
                 
             ),
         ),
@@ -80,7 +78,7 @@ class Citycrisisanalyser():
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
             verbose=True,
-            llm=LLM(model="ollama/gemma2", base_url="http://localhost:11434"),
+            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434"),
             tools=[pdf_search_tool],
         )
 
@@ -89,7 +87,7 @@ class Citycrisisanalyser():
         return Agent(
             config=self.agents_config['reporting_analyst'], # type: ignore[index]
             verbose=True,
-            llm=LLM(model="ollama/gemma2", base_url="http://localhost:11434")
+            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
         )
 
     # To learn more about structured task outputs,
