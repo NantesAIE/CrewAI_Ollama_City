@@ -14,7 +14,7 @@ pdf_search_tool = PDFSearchTool(
         llm=dict(
             provider="ollama",
             config=dict(
-                model="gemma2",
+                model="llama3.2:1b",
                 
             ),
         ),
@@ -78,7 +78,7 @@ class Citycrisisanalyser():
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
             verbose=True,
-            llm=LLM(model="ollama/gemma2", base_url="http://localhost:11434"),
+            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434"),
             tools=[pdf_search_tool],
         )
 
@@ -87,7 +87,7 @@ class Citycrisisanalyser():
         return Agent(
             config=self.agents_config['reporting_analyst'], # type: ignore[index]
             verbose=True,
-            llm=LLM(model="ollama/gemma2", base_url="http://localhost:11434")
+            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
         )
 
     # To learn more about structured task outputs,
