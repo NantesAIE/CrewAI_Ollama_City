@@ -1,3 +1,10 @@
+image_analyst:
+  description: >
+    Review the fire.jpg and describe what you see.
+  expected_output: >
+    Detailed and precise description of the image
+  agent: image_analyst
+
 research_task:
   description: >
     Review the 21_Laws_of_AI_Solutions_Architecture.pdf and summarize the main topics.

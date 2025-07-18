@@ -74,6 +74,13 @@ class Citycrisisanalyser():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
+    def image_analyst(self) -> Agent:
+        return Agent(
+            config=self.agents_config['image_analyst'], # type: ignore[index]
+            verbose=True,
+            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
+        )
+    @agent
     def researcher(self) -> Agent:
         return Agent(
             config=self.agents_config['researcher'], # type: ignore[index]
@@ -93,6 +100,12 @@ class Citycrisisanalyser():
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
+    @task
+    def image_analyst(self) -> Task:
+        return Task(
+            config=self.tasks_config['image_analyst'], # type: ignore[index]
+        )
+    
     @task
     def research_task(self) -> Task:
         return Task(
