@@ -9,7 +9,7 @@ import os
 
 
 pdf_search_tool = PDFSearchTool(
-  pdf='knowledge/21_Laws_of_AI_Solutions_Architecture.pdf',
+  pdf='knowledge/PLAN_DE_GESTION_DE_CRISE.pdf',
   config=dict(
         llm=dict(
             provider="ollama",
