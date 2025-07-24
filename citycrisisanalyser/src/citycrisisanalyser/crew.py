@@ -54,12 +54,12 @@ class Citycrisisanalyser():
         print("✅ Fichiers de configuration chargés.")
         print("🔑 Clés disponibles dans tasks_config :", self.tasks_config.keys())
 
-    # Exemple d’une méthode utilisant tasks_config
+    # méthode utilisant tasks_config
     def research_task(self):
         research_config = self.tasks_config.get('research_task')
         if research_config is None:
             raise KeyError("La clé 'research_task' est absente dans tasks.yaml")
-        # Ici, continuer le traitement avec research_config
+        # continuer le traitement avec research_config
         print("Recherche en cours avec la config:", research_config)
 
 
@@ -74,18 +74,32 @@ class Citycrisisanalyser():
     # If you would like to add tools to your agents, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def researcher(self) -> Agent:
+    def vision_analyst(self) -> Agent:
         return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
+            config=self.agents_config['vision_analyst'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434"),
-            tools=[pdf_search_tool],
+            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
         )
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def situation_interpreter(self) -> Agent:
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
+            config=self.agents_config['situation_interpreter'],
+            verbose=True,
+            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
+        )
+
+    @agent
+    def protocol_mapper(self) -> Agent:
+        return Agent(
+            config=self.agents_config['protocol_mapper'],
+            verbose=True,
+            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
+        )
+    @agent
+    def intervention_planner(self) -> Agent:
+        return Agent(
+            config=self.agents_config['intervention_planner'],
             verbose=True,
             llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
         )
@@ -94,16 +108,30 @@ class Citycrisisanalyser():
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def research_task(self) -> Task:
+    def vision_analyst_task(self, image_path: str = None) -> Task:
+        # passer le chemin de l'image
+        inputs = {'image_path': image_path} if image_path else {}
         return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+            config=self.tasks_config['vision_analyst_task'], 
+            inputs=inputs
         )
 
     @task
-    def reporting_task(self) -> Task:
+    def situation_interpreter_task(self) -> Task:
         return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='repoort.md'
+            config=self.tasks_config['situation_interpreter_task'],
+        )
+
+    @task
+    def protocol_mapper_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['protocol_mapper_task'],
+        )
+
+    @task
+    def intervention_planner_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['intervention_planner_task'],
         )
 
     @crew

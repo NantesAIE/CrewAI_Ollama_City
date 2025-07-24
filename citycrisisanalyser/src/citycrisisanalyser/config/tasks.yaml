@@ -1,13 +1,31 @@
-research_task:
+vision_analyst_task:
   description: >
-    Review the PLAN_DE_GESTION_DE_CRISE.pdf and summarize the main topics.
+    Analyze a crisis-related image (e.g., fire, flood, accident) and identify all visually relevant elements.
+    Focus on detecting the type of event, severity indicators, key objects (like smoke, water, vehicles, victims), and any potential hazards.
   expected_output: >
-    Bullet points of the most takeaways from the document.
-  agent: researcher
+    A list with 10 bullet points detailing the visual elements detected in the image, including the type of crisis and contextual indicators of severity.
+  agent: vision_analyst
 
-reporting_task:
+situation_interpreter_task:
   description: >
-    Make sure the report is professional, polished, and contains all relevant information.
+    Interpret the visual elements provided by the image analysis to summarize the overall crisis situation in natural language.
+    Ensure that the summary includes the nature of the event, location cues (if any), potential risks, and urgency level.
   expected_output: >
-    A report with 3 to 5 main takeaways from the ebook.pdf document
-  agent: reporting_analyst
+    A list with 10 bullet points summarizing the interpreted situation, highlighting crisis type, location (if inferred), severity, and contextual clues.
+  agent: situation_interpreter
+
+protocol_mapper_task:
+  description: >
+    From a given crisis summary and a reference document containing crisis management protocols, retrieve the most relevant interventions.
+    Match the current situation semantically to similar documented cases and extract the appropriate action steps.
+  expected_output: >
+    A list with 10 bullet points outlining the most relevant interventions drawn from the reference document that match the detected crisis scenario.
+  agent: protocol_mapper
+
+intervention_planner_task:
+  description: >
+    Based on the identified crisis and the matched protocols, generate a prioritized and structured intervention plan.
+    The plan should organize interventions by urgency and include brief rationales for each step.
+  expected_output: >
+    A list with 10 bullet points presenting a prioritized intervention plan, with each point including the action and its justification.
+  agent: intervention_planner
