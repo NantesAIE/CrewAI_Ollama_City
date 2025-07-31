@@ -18,9 +18,9 @@ def run():
     Run the crew.
     """
     inputs = {
-        #'topic': 'AI LLMs',
-        #'current_year': str(datetime.now().year)
-        'image_path': 'images/ma_crise.jpg'
+        'topic': 'AI LLMs',
+        'current_year': str(datetime.now().year)
+        #'image_path': 'images/ma_crise.jpg'
     }
     
     try:

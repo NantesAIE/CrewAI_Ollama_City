@@ -7,15 +7,13 @@ import ollama
 import yaml
 import os
 
-
 pdf_search_tool = PDFSearchTool(
-  pdf='knowledge/PLAN_DE_GESTION_DE_CRISE.pdf',
-  config=dict(
+    pdf='knowledge/PLAN_DE_GESTION_DE_CRISE.pdf',
+    config=dict(
         llm=dict(
             provider="ollama",
             config=dict(
-                model="llama3.2:1b",
-                
+                model="mistral:7b",
             ),
         ),
         embedder=dict(
@@ -33,41 +31,21 @@ pdf_search_tool = PDFSearchTool(
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 @CrewBase
-
-
-class Citycrisisanalyser():
+class Citycrisisanalyser:
     def __init__(self):
-        # Chemin absolu vers le dossier src/citycrisisanalyser
         base_path = os.path.dirname(os.path.abspath(__file__))
         config_path = os.path.join(base_path, "config")
 
-        # Chargement du fichier agents.yaml
-        agents_file = os.path.join(config_path, 'agents.yaml')
-        with open(agents_file, 'r', encoding='utf-8') as f:
+        with open(os.path.join(config_path, 'agents.yaml'), 'r', encoding='utf-8') as f:
             self.agents_config = yaml.safe_load(f)
 
-        # Chargement du fichier tasks.yaml
-        tasks_file = os.path.join(config_path, 'tasks.yaml')
-        with open(tasks_file, 'r', encoding='utf-8') as f:
+        with open(os.path.join(config_path, 'tasks.yaml'), 'r', encoding='utf-8') as f:
             self.tasks_config = yaml.safe_load(f)
 
         print("✅ Fichiers de configuration chargés.")
         print("🔑 Clés disponibles dans tasks_config :", self.tasks_config.keys())
 
-    # méthode utilisant tasks_config
-    def research_task(self):
-        research_config = self.tasks_config.get('research_task')
-        if research_config is None:
-            raise KeyError("La clé 'research_task' est absente dans tasks.yaml")
-        # continuer le traitement avec research_config
-        print("Recherche en cours avec la config:", research_config)
-
-
-
-
-
-
-    # Learn more about YAML configuration files here:
+  # Learn more about YAML configuration files here:
     # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
     
@@ -78,7 +56,7 @@ class Citycrisisanalyser():
         return Agent(
             config=self.agents_config['vision_analyst'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
+            llm=LLM(model="ollama/llava:7b", base_url="http://localhost:11434", temperature=0.2),
         )
 
     @agent
@@ -86,7 +64,7 @@ class Citycrisisanalyser():
         return Agent(
             config=self.agents_config['situation_interpreter'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
+            llm=LLM(model="ollama/llama3.2:3b", base_url="http://localhost:11434"),
         )
 
     @agent
@@ -94,14 +72,16 @@ class Citycrisisanalyser():
         return Agent(
             config=self.agents_config['protocol_mapper'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
+            llm=LLM(model="ollama/mistral:7b", base_url="http://localhost:11434"),
+            tools=[pdf_search_tool]
         )
+
     @agent
     def intervention_planner(self) -> Agent:
         return Agent(
             config=self.agents_config['intervention_planner'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:1b", base_url="http://localhost:11434")
+            llm=LLM(model="ollama/llama3.2:3b", base_url="http://localhost:11434"),
         )
 
     # To learn more about structured task outputs,
@@ -133,6 +113,40 @@ class Citycrisisanalyser():
         return Task(
             config=self.tasks_config['intervention_planner_task'],
         )
+
+    # Méthode asynchrone pour exécuter la chaîne complète avec passage des résultats
+    async def run_full_analysis(self):
+        # 1. Vision analyst avec chemin image fixe
+        vision_task = self.vision_analyst_task()
+        vision_task.inputs = {'image_path': 'images/ma_crise.jpg'}
+        vision_result = await vision_task.run()
+        description_image = vision_result.output.get('description', '')  # adapte selon sortie
+
+        # 2. Situation interpreter avec description de l'image en entrée
+        situation_task = self.situation_interpreter_task()
+        situation_task.inputs = {'image_analysis': description_image}
+        situation_result = await situation_task.run()
+        situation_summary = situation_result.output.get('summary', '')
+
+        # 3. Protocol mapper avec résumé de situation
+        protocol_task = self.protocol_mapper_task()
+        protocol_task.inputs = {'query': situation_summary}
+        protocol_result = await protocol_task.run()
+        protocol_interventions = protocol_result.output.get('interventions', [])
+
+        # 4. Intervention planner avec interventions trouvées
+        intervention_task = self.intervention_planner_task()
+        intervention_task.inputs = {'interventions': protocol_interventions}
+        intervention_result = await intervention_task.run()
+        intervention_plan = intervention_result.output.get('plan', [])
+
+        # Résultat final
+        return {
+            'vision_analysis': description_image,
+            'situation_summary': situation_summary,
+            'protocol_interventions': protocol_interventions,
+            'intervention_plan': intervention_plan,
+        }
 
     @crew
     def crew(self) -> Crew:
