@@ -7,9 +7,11 @@ import ollama
 import yaml
 import os
 
+base_path = os.path.dirname(os.path.abspath(__file__))
+pdf_path = os.path.join(base_path, '..', '..', 'knowledge', 'PLAN_DE_GESTION_DE_CRISE.pdf')
 pdf_search_tool = PDFSearchTool(
-    pdf='knowledge/PLAN_DE_GESTION_DE_CRISE.pdf',
-    config=dict(
+pdf=pdf_path,
+config=dict(
         llm=dict(
             provider="ollama",
             config=dict(
