@@ -4,7 +4,7 @@ import warnings
 
 from datetime import datetime
 
-from citycrisisanalyser.crew import Citycrisisanalyser
+from citycrisisanalyser.crew import Citycrisisanalyser, encode_image_base64, run_llava_ollama
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
@@ -12,6 +12,12 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 # crew locally, so refrain from adding unnecessary logic into this file.
 # Replace with inputs you want to test with, it will automatically
 # interpolate any tasks and agents information
+image_path = "images/ma_crise.jpg" 
+image_base64 = encode_image_base64(image_path)
+
+prompt = "Décris ce que tu vois dans l'image."
+result = run_llava_ollama(prompt, image_base64)
+
 
 def run():
     """
@@ -19,8 +25,9 @@ def run():
     """
     inputs = {
         'topic': 'AI LLMs',
-        'current_year': str(datetime.now().year)
-        #'image_path': 'images/ma_crise.jpg'
+        'current_year': str(datetime.now().year),
+        'image_path': image_base64,
+        'result': result
     }
     
     try:

@@ -1,11 +1,30 @@
+import base64
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 from crewai_tools import PDFSearchTool
 import ollama
+import requests
 import yaml
 import os
+
+def encode_image_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+    
+#  Appel LLaVA via Ollama
+def run_llava_ollama(prompt, image_base64):
+    response = requests.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": "llava:7b",
+            "prompt": prompt,
+            "images": [image_base64],
+            "stream": False
+        }
+    )
+    return response.json()["response"]
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 pdf_path = os.path.join(base_path, '..', '..', 'knowledge', 'PLAN_DE_GESTION_DE_CRISE.pdf')
@@ -59,7 +78,7 @@ class Citycrisisanalyser:
             config=self.agents_config['vision_analyst'],
             verbose=True,
             llm=LLM(model="ollama/llava:7b", base_url="http://localhost:11434", temperature=0.2),
-        )
+        )       
 
     @agent
     def situation_interpreter(self) -> Agent:
@@ -90,9 +109,9 @@ class Citycrisisanalyser:
     # task dependencies, and task callbacks, check out the documentation:
     # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
-    def vision_analyst_task(self, image_path: str = None) -> Task:
+    def vision_analyst_task(self, image_base64: str = None) -> Task:
         # passer le chemin de l'image
-        inputs = {'image_path': image_path} if image_path else {}
+        inputs = {'image_base64': image_base64} if image_base64 else {}
         return Task(
             config=self.tasks_config['vision_analyst_task'], 
             inputs=inputs
@@ -116,39 +135,6 @@ class Citycrisisanalyser:
             config=self.tasks_config['intervention_planner_task'],
         )
 
-    # Méthode asynchrone pour exécuter la chaîne complète avec passage des résultats
-    async def run_full_analysis(self):
-        # 1. Vision analyst avec chemin image fixe
-        vision_task = self.vision_analyst_task()
-        vision_task.inputs = {'image_path': 'images/ma_crise.jpg'}
-        vision_result = await vision_task.run()
-        description_image = vision_result.output.get('description', '')  # adapte selon sortie
-
-        # 2. Situation interpreter avec description de l'image en entrée
-        situation_task = self.situation_interpreter_task()
-        situation_task.inputs = {'image_analysis': description_image}
-        situation_result = await situation_task.run()
-        situation_summary = situation_result.output.get('summary', '')
-
-        # 3. Protocol mapper avec résumé de situation
-        protocol_task = self.protocol_mapper_task()
-        protocol_task.inputs = {'query': situation_summary}
-        protocol_result = await protocol_task.run()
-        protocol_interventions = protocol_result.output.get('interventions', [])
-
-        # 4. Intervention planner avec interventions trouvées
-        intervention_task = self.intervention_planner_task()
-        intervention_task.inputs = {'interventions': protocol_interventions}
-        intervention_result = await intervention_task.run()
-        intervention_plan = intervention_result.output.get('plan', [])
-
-        # Résultat final
-        return {
-            'vision_analysis': description_image,
-            'situation_summary': situation_summary,
-            'protocol_interventions': protocol_interventions,
-            'intervention_plan': intervention_plan,
-        }
 
     @crew
     def crew(self) -> Crew:
