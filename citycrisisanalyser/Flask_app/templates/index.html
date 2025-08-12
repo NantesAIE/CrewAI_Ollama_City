@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Crisis Analyser</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div id="dragDropArea" class="drag-drop-area">
+                <p>Drag and Drop Images</p>
+            </div>
+            <button id="runAnalysis" class="run-button">Run Analysis</button>
+            <div class="predefined-images">
+                <img src="../../images/ma_crise.jpg" alt="Image 1" class="predefined-image">
+                <img src="../../images/incendie.jpg" alt="Image 2" class="predefined-image">
+            </div>
+        </div>
+        <div class="middle-panel">
+            <div class="agent-node">
+                <div class="agent" id="agent1">Vision analyst</div>
+                <div class="agent" id="agent2">Situation interpreter</div>
+                <div class="agent" id="agent3">Protocol mapper</div>
+                <div class="agent" id="agent4">Intervention planner</div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div id="agentResponse" class="agent-response">
+                <!-- Les réponses des agents seront affichées ici -->
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
