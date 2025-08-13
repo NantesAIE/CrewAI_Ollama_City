@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Crisis Analyser</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <main class="container">
+        <section class="panel left-panel">
+            <div id="dragDropArea" class="drag-drop-area" tabindex="0" aria-label="Zone de dépôt d'images">
+                <p id="dragDropText">Déposez ou sélectionnez une image</p>
+            </div>
+            <input type="file" id="fileInput" accept=".jpg,image/jpeg" style="display:none;">
+            <p id="imageError" style="color: #d32f2f; display: none; font-weight: bold; margin: 0.5em 0;">Une image est nécessaire pour lancer l'analyse.</p>
+            <button id="runAnalysis" class="run-button">Lancer l'analyse</button>
+            <div class="predefined-images" aria-label="Images prédéfinies">
+                <img src="/static/images/ma_crise.jpg" alt="Crise" class="predefined-image" tabindex="0">
+                <img src="/static/images/incendie.jpg" alt="Incendie" class="predefined-image" tabindex="0">
+                <img src="/static/images/incendie.jpg" alt="Incendie" class="predefined-image" tabindex="0">
+                <img src="/static/images/ma_crise.jpg" alt="Crise" class="predefined-image" tabindex="0">
+                <img src="/static/images/ma_crise.jpg" alt="Crise" class="predefined-image" tabindex="0">
+                <img src="/static/images/incendie.jpg" alt="Incendie" class="predefined-image" tabindex="0">
+
+            </div>
+        </section>
+        <section class="panel middle-panel">
+            <div class="agent-node">
+                <div class="agent" id="agent1">Vision analyst</div>
+                <div class="agent" id="agent2">Situation interpreter</div>
+                <div class="agent" id="agent3">Protocol mapper</div>
+                <div class="agent" id="agent4">Intervention planner</div>
+            </div>
+        </section>
+        <section class="panel right-panel">
+            <div id="agentResponse" class="agent-response" aria-live="polite">
+                <!-- Les réponses des agents seront affichées ici -->
+            </div>
+        </section>
+    </main>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

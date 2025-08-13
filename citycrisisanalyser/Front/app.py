@@ -1,6 +1,14 @@
 from flask import Flask, render_template, request, jsonify
-from crewai_module.crew import Citycrisisanalyser
+# from crewai_module.crew import Citycrisisanalyser
 import os
+
+try:
+    from citycrisisanalyser.crew import Citycrisisanalyser
+except Exception:
+    class Citycrisisanalyser:
+        def run_full_analysis(self):
+            # Simule une réponse
+            return {"message": "Mode démo : analyse simulée, Ollama non disponible."}
 
 app = Flask(__name__)
 
