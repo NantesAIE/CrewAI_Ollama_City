@@ -20,7 +20,7 @@ def run():
     inputs = {
         'topic': 'AI LLMs',
         'current_year': str(datetime.now().year)
-        #'image_path': 'images/ma_crise.jpg'
+        #'image_path': 'images/inondation.jpg'
     }
     
     try:

@@ -104,3 +104,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
     showDragDropZone();
 });
+
+function drawAgentLines() {
+    const equipe = document.getElementById('equipe');
+    const agents = [
+        document.getElementById('agent1'),
+        document.getElementById('agent2'),
+        document.getElementById('agent3'),
+        document.getElementById('agent4')
+    ];
+    const svg = document.getElementById('agent-lines');
+    if (!equipe || agents.some(a => !a) || !svg) return;
+
+    svg.innerHTML = '';
+
+    // Prend les positions de l'Equipe et des Agents
+    const equipeRect = equipe.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+
+    agents.forEach(agent => {
+        const agentRect = agent.getBoundingClientRect();
+
+        // Calculer les coordonnées de départ et d'arrivée
+        const startX = equipeRect.right - svgRect.left;
+        const startY = equipeRect.top + equipeRect.height / 2 - svgRect.top;
+        const endX = agentRect.left - svgRect.left;
+        const endY = agentRect.top + agentRect.height / 2 - svgRect.top;
+
+        // Créer une ligne SVG
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', startX);
+        line.setAttribute('y1', startY);
+        line.setAttribute('x2', endX);
+        line.setAttribute('y2', endY);
+        line.setAttribute('stroke', '#007BFF');
+        line.setAttribute('stroke-width', '3');
+        svg.appendChild(line);
+    });
+}
+
+// Redraw lines on resize and after DOM is loaded
+window.addEventListener('resize', drawAgentLines);
+window.addEventListener('DOMContentLoaded', drawAgentLines);
+setTimeout(drawAgentLines, 300); // In case of late rendering

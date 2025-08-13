@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 # from crewai_module.crew import Citycrisisanalyser
 import os
 
+# Importe directement la classe Citycrisisanalyser depuis le module citycrisisanalyser sans utiliser crewai_module
 try:
     from citycrisisanalyser.crew import Citycrisisanalyser
 except Exception:
