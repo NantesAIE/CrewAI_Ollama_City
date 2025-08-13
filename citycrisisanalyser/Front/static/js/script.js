@@ -137,7 +137,7 @@ function drawAgentLines() {
         line.setAttribute('y1', startY);
         line.setAttribute('x2', endX);
         line.setAttribute('y2', endY);
-        line.setAttribute('stroke', '#007BFF');
+        line.setAttribute('stroke', '#000000ff');
         line.setAttribute('stroke-width', '3');
         svg.appendChild(line);
     });
