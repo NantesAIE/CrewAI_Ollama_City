@@ -58,7 +58,7 @@ class Citycrisisanalyser:
         return Agent(
             config=self.agents_config['vision_analyst'],
             verbose=True,
-            llm=LLM(model="ollama/llava:7b", base_url="http://localhost:11434", temperature=0.2),
+            llm=LLM(model="ollama/llava:7b", base_url="http://aielab.local:11434", temperature=0.2),
         )
 
     @agent
@@ -66,7 +66,7 @@ class Citycrisisanalyser:
         return Agent(
             config=self.agents_config['situation_interpreter'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:3b", base_url="http://localhost:11434"),
+            llm=LLM(model="ollama/llama3.2:3b", base_url="http://aielab.local:11434"),
         )
 
     @agent
@@ -74,7 +74,7 @@ class Citycrisisanalyser:
         return Agent(
             config=self.agents_config['protocol_mapper'],
             verbose=True,
-            llm=LLM(model="ollama/mistral:7b", base_url="http://localhost:11434"),
+            llm=LLM(model="ollama/mistral:7b", base_url="http://aielab.local:11434"),
             tools=[pdf_search_tool]
         )
 
@@ -83,7 +83,7 @@ class Citycrisisanalyser:
         return Agent(
             config=self.agents_config['intervention_planner'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:3b", base_url="http://localhost:11434"),
+            llm=LLM(model="ollama/llama3.2:3b", base_url="http://aielab.local:11434"),
         )
 
     # To learn more about structured task outputs,

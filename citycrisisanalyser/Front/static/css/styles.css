@@ -39,6 +39,7 @@ body, html {
     background:#ADD8E6;
     justify-content: space-around;
     align-items: center;
+    position: relative;
 }
 
 .right-panel {
@@ -134,6 +135,8 @@ body, html {
 }
 
 .agent {
+    position: relative;
+    overflow: hidden;
     width: 100px;
     height: 100px;
     background: #fff;
@@ -149,6 +152,28 @@ body, html {
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     z-index: 1;
+}
+
+.agent-fill {
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%;
+    height: 0%;
+    background: #2ecc40;
+    border-radius: 50%;
+    z-index: 0;
+    transition: height 2s linear;
+    opacity: 0.5;
+}
+
+.agent.loading .agent-fill {
+    height: 100%;
+    transition: height 2s linear;
+}
+
+.agent.done .agent-fill {
+    height: 100%;
+    opacity: 0.8;
 }
 
 .agent:hover, .agent:focus {
@@ -237,6 +262,66 @@ body, html {
     background: #ff4444;
 }
 
+.link-bars-container {
+    position: absolute;
+    width: 100%;
+    left: 20%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.progress-bar-link-diag {
+    position: absolute;
+    width: 160px;
+    height: 3px;
+    background: #111;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0;
+}
+
+.progress-bar-link-inner {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    transition: background 0.3s;
+}
+
+.progress-bar-link-diag.loading .progress-bar-link-inner {
+    background: linear-gradient(90deg, transparent 0%, #2ecc40 40%, #2ecc40 60%, transparent 100%);
+    animation: progress-bar-link-move 2s linear infinite;
+}
+
+@keyframes progress-bar-link-move {
+    0% { background-position: -60px 0; }
+    100% { background-position: 160px 0; }
+}
+
+.progress-bar-link-diag.done .progress-bar-link-inner {
+    background: #2ecc40;
+    animation: none;
+}
+
+/* Positionnement et rotation pour relier l'orchestrateur aux agents */
+.progress-bar-link-diag:nth-child(1) {
+    top: -75px;
+    transform: rotate(-45deg);
+}
+.progress-bar-link-diag:nth-child(2) {
+    top: -25px;
+    transform: rotate(-25deg);
+}
+.progress-bar-link-diag:nth-child(3) {
+    top: 25px;
+    transform: rotate(25deg);
+}
+.progress-bar-link-diag:nth-child(4) {
+    top: 75px;
+    transform: rotate(45deg);
+}
+
 @media (max-width: 900px) {
     .container {
         flex-direction: column;
@@ -277,4 +362,99 @@ body, html {
         padding: 0.8rem;
         gap: 1rem;
     }
+}
+
+
+.progress-bar-container {
+    width: 100%;
+    margin: 16px 0 8px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.progress-bar {
+    width: 90%;
+    max-width: 320px;
+    height: 16px;
+    background: #111;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.progress-bar-inner {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    transition: background 0.3s;
+}
+
+.progress-bar.loading .progress-bar-inner {
+    background: linear-gradient(90deg, transparent 0%, #2ecc40 40%, #2ecc40 60%, transparent 100%);
+    animation: progress-bar-move 5s linear infinite;
+}
+
+@keyframes progress-bar-move {
+    0% { background-position: -120px 0; }
+    100% { background-position: 320px 0; }
+}
+
+.progress-bar.done .progress-bar-inner {
+    background: #2ecc40;
+    animation: none;
+}
+
+.progress-bar-link-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-bar-link {
+    width: 100%;
+    max-width: 220px;
+    height: 6px;
+    background: #111;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    margin: 0 8px;
+}
+
+.progress-bar-link-inner {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    transition: background 0.3s;
+}
+
+.progress-bar-link.loading .progress-bar-link-inner {
+    background: linear-gradient(90deg, transparent 0%, #2ecc40 40%, #2ecc40 60%, transparent 100%);
+    animation: progress-bar-link-move 2s linear infinite;
+}
+
+@keyframes progress-bar-link-move {
+    0% { background-position: -60px 0; }
+    100% { background-position: 220px 0; }
+}
+
+.progress-bar-link.done .progress-bar-link-inner {
+    background: #2ecc40;
+    animation: none;
+}
+
+.agent-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
 }

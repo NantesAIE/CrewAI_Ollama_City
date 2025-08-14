@@ -19,24 +19,40 @@
                 <img src="/static/images/inondation.jpg" alt="Crise" class="predefined-image" tabindex="0">
                 <img src="/static/images/incendie.jpg" alt="Incendie" class="predefined-image" tabindex="0">
                 <img src="/static/images/eboulement.jpg" alt="Incendie" class="predefined-image" tabindex="0">
-                <img src="/static/images/inondation.jpg" alt="Crise" class="predefined-image" tabindex="0">
-                <img src="/static/images/incendie.jpg" alt="Incendie" class="predefined-image" tabindex="0">
-                <img src="/static/images/eboulement.jpg" alt="Crise" class="predefined-image" tabindex="0">
+                <img src="/static/images/batiments.jpg" alt="Crise" class="predefined-image" tabindex="0">
+                <img src="/static/images/Lac.jpg" alt="Incendie" class="predefined-image" tabindex="0">
+                <img src="/static/images/RuePassante.jpg" alt="Crise" class="predefined-image" tabindex="0">
             </div>
         </section>
         <section class="panel middle-panel">
-                <div class="left-part">
-                    <div class="agent" id="equipe">Orchestrateur</div>
-                </div>
-                <div class="right-part">
-                    <div class="agent-node">
-                        <div class="agent" id="agent1">Vision analyst</div>
-                        <div class="agent" id="agent2">Situation interpreter</div>
-                        <div class="agent" id="agent3">Protocol mapper</div>
-                        <div class="agent" id="agent4">Intervention planner</div>
+            <div class="left-part" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div class="agent" id="equipe">Orchestrateur</div>
+            </div>
+            <div class="middle-part" style="flex:1; display: flex; flex-direction: column; justify-content: center; gap: 2.5rem;">
+                <div class="link-bars-container">
+                    <div id="progressBarLink1" class="progress-bar-link-diag">
+                        <div class="progress-bar-link-inner"></div>
+                    </div>
+                    <div id="progressBarLink2" class="progress-bar-link-diag">
+                        <div class="progress-bar-link-inner"></div>
+                    </div>
+                    <div id="progressBarLink3" class="progress-bar-link-diag">
+                        <div class="progress-bar-link-inner"></div>
+                    </div>
+                    <div id="progressBarLink4" class="progress-bar-link-diag">
+                        <div class="progress-bar-link-inner"></div>
                     </div>
                 </div>
-                <svg id="agent-lines" class="agent-lines"></svg>
+            </div>
+            <div class="right-part">
+                <div class="agent-node">
+                    <div class="agent" id="agent1"><div class="agent-fill"></div>Vision analyst</div>
+                    <div class="agent" id="agent2"><div class="agent-fill"></div>Situation interpreter</div>
+                    <div class="agent" id="agent3"><div class="agent-fill"></div>Protocol mapper</div>
+                    <div class="agent" id="agent4"><div class="agent-fill"></div>Intervention planner</div>
+                </div>
+            </div>
+            <svg id="agent-lines" class="agent-lines"></svg>
         </section>
         <section class="panel right-panel">
             <div id="agentResponse" class="agent-response" aria-live="polite">
