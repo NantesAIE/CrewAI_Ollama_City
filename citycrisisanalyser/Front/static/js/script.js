@@ -142,6 +142,87 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.readAsDataURL(file);
     }
 
+    // --- Animation des barres de liaison SVG ---
+    let svgLinks = []; // Stocke les éléments SVG pour animation
+
+    function drawAgentLinesAndBars(state = 'idle') {
+        const equipe = document.getElementById('equipe');
+        const agents = [
+            document.getElementById('agent1'),
+            document.getElementById('agent2'),
+            document.getElementById('agent3'),
+            document.getElementById('agent4')
+        ];
+        const svg = document.getElementById('agent-lines');
+        if (!equipe || agents.some(a => !a) || !svg) return;
+
+        svg.innerHTML = '';
+        svgLinks = [];
+
+        // Prend les positions de l'Equipe et des Agents
+        const equipeRect = equipe.getBoundingClientRect();
+        const svgRect = svg.getBoundingClientRect();
+
+        // Centre de l'orchestrateur
+        const startX = equipeRect.left + equipeRect.width / 2 - svgRect.left;
+        const startY = equipeRect.top + equipeRect.height / 2 - svgRect.top;
+
+        agents.forEach((agent, idx) => {
+            const agentRect = agent.getBoundingClientRect();
+            // Centre de l'agent
+            const endX = agentRect.left + agentRect.width / 2 - svgRect.left;
+            const endY = agentRect.top + agentRect.height / 2 - svgRect.top;
+
+            // Barre SVG animée (on utilise <rect> pour l'animation de remplissage)
+            const length = Math.hypot(endX - startX, endY - startY);
+            const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+
+            // Groupe pour positionner la barre
+            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            group.setAttribute('transform', `translate(${startX},${startY}) rotate(${angle})`);
+
+            // Barre de fond
+            const barBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            barBg.setAttribute('x', 0);
+            barBg.setAttribute('y', -2);
+            barBg.setAttribute('width', length);
+            barBg.setAttribute('height', 4);
+            barBg.setAttribute('rx', 2);
+            barBg.setAttribute('fill', '#111');
+            group.appendChild(barBg);
+
+            // Barre de remplissage animée
+            const barFill = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            barFill.setAttribute('x', 0);
+            barFill.setAttribute('y', -2);
+            barFill.setAttribute('width', state === 'done' ? length : 0);
+            barFill.setAttribute('height', 4);
+            barFill.setAttribute('rx', 2);
+            barFill.setAttribute('fill', '#2ecc40');
+            barFill.style.transition = 'width 1.2s linear';
+            group.appendChild(barFill);
+
+            svg.appendChild(group);
+            svgLinks.push(barFill);
+        });
+    }
+
+    // Animation de remplissage
+    function startProgressBarLinksLoadingSVG() {
+        svgLinks.forEach((bar, idx) => {
+            bar.setAttribute('width', 0);
+            setTimeout(() => {
+                bar.setAttribute('width', bar.parentNode.firstChild.getAttribute('width'));
+            }, idx * 300); // Animation séquentielle
+        });
+    }
+
+    function setProgressBarLinksDoneSVG() {
+        svgLinks.forEach(bar => {
+            bar.setAttribute('width', bar.parentNode.firstChild.getAttribute('width'));
+        });
+    }
+
     // --- Lancer l'analyse ---
     runAnalysisButton.addEventListener('click', function() {
         const dropped = dragDropArea.querySelector('.dropped-image');
@@ -151,8 +232,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (imageError) imageError.style.display = 'none';
 
-        // Animation barres de liaison
-        startProgressBarLinksLoading();
+        // Animation barres de liaison SVG
+        drawAgentLinesAndBars('idle');
+        startProgressBarLinksLoadingSVG();
 
         // Animation agents (remplissage séquentiel)
         let i = 0;
@@ -163,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     setAgentDone(i);
                     i++;
                     nextAgent();
-                }, 1200); // Durée de remplissage par agent
+                }, 1200);
             }
         }
         nextAgent();
@@ -177,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (file && file.type === 'image/jpeg') {
             imageToBase64NoHeader(file, function(base64Str) {
-                console.log("Base64 image (sans header):", base64Str); // Affiche le base64 dans la console
+                console.log("Base64 image (sans header):", base64Str);
             });
         }
 
@@ -188,12 +270,17 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             agentResponse.textContent = data.message;
-            setProgressBarLinksDone();
+            setProgressBarLinksDoneSVG();
         });
     });
 
     // Initialisation
     showDragDropZone();
+    drawAgentLinesAndBars('idle');
+
+    // Redessine les lignes/barres au chargement et au resize
+    window.addEventListener('resize', () => drawAgentLinesAndBars('idle'));
+    window.addEventListener('DOMContentLoaded', () => drawAgentLinesAndBars('idle'));
 });
 
 
@@ -215,13 +302,14 @@ function drawAgentLines() {
     const equipeRect = equipe.getBoundingClientRect();
     const svgRect = svg.getBoundingClientRect();
 
+    // Centre de l'orchestrateur
+    const startX = equipeRect.left + equipeRect.width / 2 - svgRect.left;
+    const startY = equipeRect.top + equipeRect.height / 2 - svgRect.top;
+
     agents.forEach(agent => {
         const agentRect = agent.getBoundingClientRect();
-
-        // Calculer les coordonnées de départ et d'arrivée
-        const startX = equipeRect.right - svgRect.left;
-        const startY = equipeRect.top + equipeRect.height / 2 - svgRect.top;
-        const endX = agentRect.left - svgRect.left;
+        // Centre de l'agent
+        const endX = agentRect.left + agentRect.width / 2 - svgRect.left;
         const endY = agentRect.top + agentRect.height / 2 - svgRect.top;
 
         // Créer une ligne SVG
@@ -230,8 +318,12 @@ function drawAgentLines() {
         line.setAttribute('y1', startY);
         line.setAttribute('x2', endX);
         line.setAttribute('y2', endY);
-        line.setAttribute('stroke', '#000000ff');
+        line.setAttribute('stroke', '#000');
         line.setAttribute('stroke-width', '3');
         svg.appendChild(line);
     });
 }
+
+// Redessine les lignes au chargement et au resize
+window.addEventListener('DOMContentLoaded', drawAgentLines);
+window.addEventListener('resize', drawAgentLines);
