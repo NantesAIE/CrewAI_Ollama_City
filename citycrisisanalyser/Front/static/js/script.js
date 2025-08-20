@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- Configuration --- //
+
+    const DEV_MODE = true; // true pour mode test
+    const API_URL = 'http://localhost:8000/analyse'; // URL FastAPI
+
     // Sélecteurs principaux
     const dragDropArea = document.getElementById('dragDropArea');
     const runAnalysisButton = document.getElementById('runAnalysis');
@@ -6,63 +12,50 @@ document.addEventListener('DOMContentLoaded', function() {
     const imageError = document.getElementById('imageError');
     const predefinedImages = document.querySelectorAll('.predefined-image');
     const agentResponse = document.getElementById('agentResponse');
-
-    // Barres de liaison agents
-    const progressBarLinks = [
-        document.getElementById('progressBarLink1'),
-        document.getElementById('progressBarLink2'),
-        document.getElementById('progressBarLink3'),
-        document.getElementById('progressBarLink4')
-    ];
-
-    // Agents (cercles à droite)
     const agentNodes = [
         document.getElementById('agent1'),
         document.getElementById('agent2'),
         document.getElementById('agent3'),
         document.getElementById('agent4')
     ];
+    let currentFile = null;
+    let svgLinks = [];
 
-    // --- Drag & Drop et sélection d'image ---
+    // --- Drag & Drop et sélection d'image --- //
     function showDragDropZone() {
         dragDropArea.innerHTML = '';
         const p = document.createElement('p');
         p.id = 'dragDropText';
         p.textContent = 'Déposez ou sélectionnez une image';
         dragDropArea.appendChild(p);
-        dragDropArea.classList.add('drag-drop-area');
+        dragDropArea.classList.add('border-dashed', 'border-2', 'border-[#90CAF9]', 'rounded-lg', 'cursor-pointer');
         if (imageError) imageError.style.display = 'none';
+        currentFile = null;
     }
 
     function addImage(src, file = null) {
         if (dragDropArea.querySelector('.dropped-image')) return;
         dragDropArea.innerHTML = '';
-        dragDropArea.classList.remove('drag-drop-area');
-
+        dragDropArea.classList.remove('border-dashed', 'border-2', 'border-[#90CAF9]');
         const imgWrapper = document.createElement('div');
-        imgWrapper.className = 'dropped-image';
-
+        imgWrapper.className = 'relative w-full h-full group dropped-image';
         const img = document.createElement('img');
         img.src = src;
+        img.className = 'block w-full h-full rounded-lg object-cover';
         imgWrapper.appendChild(img);
-
-        // Stocke le fichier original dans l'élément pour conversion base64
-        if (file) imgWrapper.file = file;
-
-        const overlay = document.createElement('div');
-        overlay.className = 'overlay';
-        imgWrapper.appendChild(overlay);
-
+        if (file) {
+            imgWrapper.file = file;
+            currentFile = file;
+        }
         const removeBtn = document.createElement('button');
-        removeBtn.textContent = '✖';
+        removeBtn.innerHTML = '&times;';
         removeBtn.title = 'Retirer';
-        removeBtn.className = 'remove-btn';
+        removeBtn.className = 'absolute top-2 right-2 bg-[#1976D2] text-white rounded-full w-7 h-7 flex items-center justify-center z-10 hover:bg-[#43A047] transition duration-200 focus:outline-none opacity-0 group-hover:opacity-100';
         removeBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             showDragDropZone();
         });
         imgWrapper.appendChild(removeBtn);
-
         dragDropArea.appendChild(imgWrapper);
         if (imageError) imageError.style.display = 'none';
     }
@@ -70,7 +63,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sélection image prédéfinie
     predefinedImages.forEach(image => {
         image.addEventListener('click', function() {
-            addImage(image.src);
+            fetch(image.src)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], image.alt + '.jpg', { type: 'image/jpeg' });
+                    addImage(image.src, file);
+                });
         });
     });
 
@@ -106,114 +104,77 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- Animation des barres de liaison ---
-    function startProgressBarLinksLoading() {
-        progressBarLinks.forEach(bar => {
-            bar.classList.remove('done');
-            bar.classList.add('loading');
-        });
-    }
-
-    function setProgressBarLinksDone() {
-        progressBarLinks.forEach(bar => {
-            bar.classList.remove('loading');
-            bar.classList.add('done');
-        });
-    }
-
-    // --- Animation des agents (remplissage) ---
+    // --- Animation des agents --- //
     function startAgentLoading(index) {
-        agentNodes[index].classList.add('loading');
-        agentNodes[index].classList.remove('done');
+        const fill = agentNodes[index].querySelector('.agent-fill');
+        fill.classList.remove('h-0', 'opacity-50');
+        fill.classList.add('h-full', 'opacity-80', 'transition-all', 'duration-1000');
     }
 
     function setAgentDone(index) {
-        agentNodes[index].classList.remove('loading');
-        agentNodes[index].classList.add('done');
+        const fill = agentNodes[index].querySelector('.agent-fill');
+        fill.classList.remove('opacity-80');
+        fill.classList.add('opacity-100');
     }
 
-    // --- Conversion image en base64 sans l'en-tête ---
+    // --- Conversion image en base64 (sans en-tête) --- //
     function imageToBase64NoHeader(file, callback) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const base64 = e.target.result.replace(/^data:image\/jpeg;base64,/, '');
+            const base64 = e.target.result.split(',')[1];
             callback(base64);
         };
         reader.readAsDataURL(file);
     }
 
-    // --- Animation des barres de liaison SVG ---
-    let svgLinks = []; // Stocke les éléments SVG pour animation
-
+    // --- Animation des barres SVG --- //
     function drawAgentLinesAndBars(state = 'idle') {
         const equipe = document.getElementById('equipe');
-        const agents = [
-            document.getElementById('agent1'),
-            document.getElementById('agent2'),
-            document.getElementById('agent3'),
-            document.getElementById('agent4')
-        ];
+        const agents = agentNodes;
         const svg = document.getElementById('agent-lines');
         if (!equipe || agents.some(a => !a) || !svg) return;
-
         svg.innerHTML = '';
         svgLinks = [];
-
-        // Prend les positions de l'Equipe et des Agents
         const equipeRect = equipe.getBoundingClientRect();
         const svgRect = svg.getBoundingClientRect();
-
-        // Centre de l'orchestrateur
         const startX = equipeRect.left + equipeRect.width / 2 - svgRect.left;
         const startY = equipeRect.top + equipeRect.height / 2 - svgRect.top;
-
         agents.forEach((agent, idx) => {
             const agentRect = agent.getBoundingClientRect();
-            // Centre de l'agent
             const endX = agentRect.left + agentRect.width / 2 - svgRect.left;
             const endY = agentRect.top + agentRect.height / 2 - svgRect.top;
-
-            // Barre SVG animée (on utilise <rect> pour l'animation de remplissage)
             const length = Math.hypot(endX - startX, endY - startY);
             const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
-
-            // Groupe pour positionner la barre
             const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             group.setAttribute('transform', `translate(${startX},${startY}) rotate(${angle})`);
-
-            // Barre de fond
             const barBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             barBg.setAttribute('x', 0);
             barBg.setAttribute('y', -2);
             barBg.setAttribute('width', length);
             barBg.setAttribute('height', 4);
             barBg.setAttribute('rx', 2);
-            barBg.setAttribute('fill', '#111');
+            barBg.setAttribute('fill', '#E0E0E0');
             group.appendChild(barBg);
-
-            // Barre de remplissage animée
             const barFill = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             barFill.setAttribute('x', 0);
             barFill.setAttribute('y', -2);
             barFill.setAttribute('width', state === 'done' ? length : 0);
             barFill.setAttribute('height', 4);
             barFill.setAttribute('rx', 2);
-            barFill.setAttribute('fill', '#2ecc40');
+            barFill.setAttribute('fill', '#43A047');
             barFill.style.transition = 'width 1.2s linear';
             group.appendChild(barFill);
-
             svg.appendChild(group);
             svgLinks.push(barFill);
         });
     }
 
-    // Animation de remplissage
     function startProgressBarLinksLoadingSVG() {
         svgLinks.forEach((bar, idx) => {
             bar.setAttribute('width', 0);
             setTimeout(() => {
                 bar.setAttribute('width', bar.parentNode.firstChild.getAttribute('width'));
-            }, idx * 300); // Animation séquentielle
+            }, idx * 300);
         });
     }
 
@@ -223,107 +184,118 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- Lancer l'analyse ---
+    // --- Lancer l'analyse (version production) --- //
     runAnalysisButton.addEventListener('click', function() {
-        const dropped = dragDropArea.querySelector('.dropped-image');
-        if (!dropped) {
+        if (!currentFile) {
             if (imageError) imageError.style.display = 'block';
             return;
         }
         if (imageError) imageError.style.display = 'none';
 
-        // Animation barres de liaison SVG
-        drawAgentLinesAndBars('idle');
-        startProgressBarLinksLoadingSVG();
+        // Convertit l'image en base64
+        imageToBase64NoHeader(currentFile, function(base64) {
+            console.log("Image en base64 (sans en-tête) :", base64);
 
-        // Animation agents (remplissage séquentiel)
-        let i = 0;
-        function nextAgent() {
-            if (i < agentNodes.length) {
-                startAgentLoading(i);
-                setTimeout(() => {
-                    setAgentDone(i);
-                    i++;
-                    nextAgent();
-                }, 1200);
+            // Démarre les animations
+            drawAgentLinesAndBars('idle');
+            startProgressBarLinksLoadingSVG();
+            agentNodes.forEach((_, idx) => startAgentLoading(idx));
+
+            if (DEV_MODE) {
+                // Mode développement : charge un fichier JSON local
+                const jsonFileInput = document.createElement('input');
+                jsonFileInput.type = 'file';
+                jsonFileInput.accept = '.json';
+                jsonFileInput.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            try {
+                                const jsonData = JSON.parse(e.target.result);
+                                displayAgentResponses(jsonData);
+                                setProgressBarLinksDoneSVG();
+                                agentNodes.forEach((_, idx) => setAgentDone(idx));
+                            } catch (err) {
+                                console.error("Erreur de parsing JSON :", err);
+                                agentResponse.textContent = "Erreur : JSON invalide.";
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
+                };
+                jsonFileInput.click();
+            } else {
+                // Mode production : envoie la requête à FastAPI
+                fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image_base64: base64,
+                        filename: currentFile.name
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erreur serveur: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Réponse de l'API :", data);
+                    displayAgentResponses(data);
+                    setProgressBarLinksDoneSVG();
+                    agentNodes.forEach((_, idx) => setAgentDone(idx));
+                })
+                .catch(error => {
+                    console.error("Erreur lors de la requête :", error);
+                    agentResponse.textContent = "Erreur lors de l'analyse. Voir la console pour plus de détails.";
+                });
             }
-        }
-        nextAgent();
-
-        // Conversion image en base64 (si fichier dispo)
-        let file = null;
-        if (dropped && dropped.file) {
-            file = dropped.file;
-        } else if (fileInput.files[0]) {
-            file = fileInput.files[0];
-        }
-        if (file && file.type === 'image/jpeg') {
-            imageToBase64NoHeader(file, function(base64Str) {
-                console.log("Base64 image (sans header):", base64Str);
-            });
-        }
-
-        // Simulation requête backend
-        fetch('/run_analysis', {
-            method: 'POST',
-        })
-        .then(response => response.json())
-        .then(data => {
-            agentResponse.textContent = data.message;
-            setProgressBarLinksDoneSVG();
         });
     });
 
     // Initialisation
     showDragDropZone();
     drawAgentLinesAndBars('idle');
-
-    // Redessine les lignes/barres au chargement et au resize
     window.addEventListener('resize', () => drawAgentLinesAndBars('idle'));
-    window.addEventListener('DOMContentLoaded', () => drawAgentLinesAndBars('idle'));
 });
 
+// Fonction pour afficher les réponses des agents
+window.displayAgentResponses = function(data) {
+    document.getElementById('content-vision').innerHTML =
+        data.vision_analysis?.[0]?.output ? marked.parse(data.vision_analysis[0].output) : 'Aucune réponse';
+    document.getElementById('content-situation').innerHTML =
+        data.situation_interpreter?.[0]?.output ? marked.parse(data.situation_interpreter[0].output) : 'Aucune réponse';
+    document.getElementById('content-protocol').innerHTML =
+        data.protocol_mapper?.[0]?.output ? marked.parse(data.protocol_mapper[0].output) : 'Aucune réponse';
+    document.getElementById('content-intervention').innerHTML =
+        data.intervention_planner?.[0]?.output ? marked.parse(data.intervention_planner[0].output) : 'Aucune réponse';
+};
 
-
-function drawAgentLines() {
-    const equipe = document.getElementById('equipe');
-    const agents = [
-        document.getElementById('agent1'),
-        document.getElementById('agent2'),
-        document.getElementById('agent3'),
-        document.getElementById('agent4')
-    ];
-    const svg = document.getElementById('agent-lines');
-    if (!equipe || agents.some(a => !a) || !svg) return;
-
-    svg.innerHTML = '';
-
-    // Prend les positions de l'Equipe et des Agents
-    const equipeRect = equipe.getBoundingClientRect();
-    const svgRect = svg.getBoundingClientRect();
-
-    // Centre de l'orchestrateur
-    const startX = equipeRect.left + equipeRect.width / 2 - svgRect.left;
-    const startY = equipeRect.top + equipeRect.height / 2 - svgRect.top;
-
-    agents.forEach(agent => {
-        const agentRect = agent.getBoundingClientRect();
-        // Centre de l'agent
-        const endX = agentRect.left + agentRect.width / 2 - svgRect.left;
-        const endY = agentRect.top + agentRect.height / 2 - svgRect.top;
-
-        // Créer une ligne SVG
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', startX);
-        line.setAttribute('y1', startY);
-        line.setAttribute('x2', endX);
-        line.setAttribute('y2', endY);
-        line.setAttribute('stroke', '#000');
-        line.setAttribute('stroke-width', '3');
-        svg.appendChild(line);
+// Gestion de l'accordéon pour les agents
+document.querySelectorAll('#accordion-agents button[data-accordion-target]').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const targetId = btn.getAttribute('data-accordion-target');
+        const target = document.querySelector(targetId);
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        // Ferme tous les autres
+        document.querySelectorAll('#accordion-agents [data-accordion-target]').forEach(otherBtn => {
+            if (otherBtn !== btn) {
+                otherBtn.setAttribute('aria-expanded', 'false');
+                const otherTargetId = otherBtn.getAttribute('data-accordion-target');
+                const otherTarget = document.querySelector(otherTargetId);
+                if (otherTarget) otherTarget.classList.add('hidden');
+                const svg = otherBtn.querySelector('svg[data-accordion-icon]');
+                if (svg) svg.classList.remove('rotate-180');
+            }
+        });
+        // Toggle celui-ci
+        btn.setAttribute('aria-expanded', String(!expanded));
+        if (target) target.classList.toggle('hidden', expanded);
+        const svg = btn.querySelector('svg[data-accordion-icon]');
+        if (svg) svg.classList.toggle('rotate-180', !expanded);
     });
-}
-
-// Redessine les lignes au chargement et au resize
-window.addEventListener('DOMContentLoaded', drawAgentLines);
-window.addEventListener('resize', drawAgentLines);
+});
