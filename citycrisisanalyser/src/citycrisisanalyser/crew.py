@@ -1,50 +1,91 @@
 import base64
+import os
+import yaml
+from dotenv import load_dotenv
+
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
-from typing import List
 from crewai_tools import PDFSearchTool
-import ollama
-import requests
-import yaml
-import os
 
-def encode_image_base64(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode("utf-8")
-    
-#  Appel LLaVA via Ollama
-def run_llava_ollama(prompt, image_base64):
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        json={
-            "model": "llava:7b",
-            "prompt": prompt,
-            "images": [image_base64],
-            "stream": False
-        }
+
+
+load_dotenv()
+
+AZURE_API_KEY = os.getenv("AZURE_API_KEY")
+AZURE_API_BASE = os.getenv("AZURE_API_BASE") 
+AZURE_API_VERSION = os.getenv("AZURE_API_VERSION", "2025-01-01-preview")
+AZURE_DEPLOYMENT_NAME = os.getenv("AZURE_DEPLOYMENT_NAME", "gpt-4o")
+
+
+llm = LLM(
+    model="azure/gpt-4o",
+    api_version=AZURE_API_VERSION
+)
+
+
+
+
+def run_gpt4o_vision(prompt, image_path):
+    from openai import AzureOpenAI
+
+    client = AzureOpenAI(
+        api_key=AZURE_API_KEY,
+        api_version=AZURE_API_VERSION,
+        azure_endpoint=AZURE_API_BASE
     )
-    return response.json()["response"]
+
+    with open(image_path, "rb") as image_file:
+        image_data = image_file.read()
+    image_base64 = base64.b64encode(image_data).decode("utf-8")
+
+    response = client.chat.completions.create(
+        model=AZURE_DEPLOYMENT_NAME,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{image_base64}"
+                        },
+                    },
+                ],
+            }
+        ],
+        temperature=0.2
+    )
+
+    return response.choices[0].message.content
+
+
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 pdf_path = os.path.join(base_path, '..', '..', 'knowledge', 'PLAN_DE_GESTION_DE_CRISE.pdf')
+print(f"Using PDF knowledge source at: {pdf_path}")
+
 pdf_search_tool = PDFSearchTool(
-pdf=pdf_path,
-config=dict(
+    pdf=pdf_path,
+    config=dict( 
         llm=dict(
-            provider="ollama",
             config=dict(
-                model="mistral:7b",
-            ),
+                model=f"azure/gpt-4o", 
+                api_key=AZURE_API_KEY,
+                base_url=AZURE_API_BASE, 
+            ), 
         ),
-        embedder=dict(
-            provider="ollama",
+        embedder=dict( 
             config=dict(
-                model="nomic-embed-text",
+                model="azure/text-embedding-ada-002", 
+                api_key =AZURE_API_KEY, 
+                api_base=AZURE_API_BASE 
             ),
         ),
     )
 )
+
 
 
 # If you want to run a snippet of code before or after the crew starts,
@@ -77,7 +118,9 @@ class Citycrisisanalyser:
         return Agent(
             config=self.agents_config['vision_analyst'],
             verbose=True,
-            llm=LLM(model="ollama/llava:7b", base_url="http://localhost:11434", temperature=0.2),
+            llm=llm
+
+
         )       
 
     @agent
@@ -85,7 +128,8 @@ class Citycrisisanalyser:
         return Agent(
             config=self.agents_config['situation_interpreter'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:3b", base_url="http://localhost:11434"),
+            llm=llm
+
         )
 
     @agent
@@ -93,7 +137,7 @@ class Citycrisisanalyser:
         return Agent(
             config=self.agents_config['protocol_mapper'],
             verbose=True,
-            llm=LLM(model="ollama/mistral:7b", base_url="http://localhost:11434"),
+            llm=llm, 
             tools=[pdf_search_tool]
         )
 
@@ -102,7 +146,8 @@ class Citycrisisanalyser:
         return Agent(
             config=self.agents_config['intervention_planner'],
             verbose=True,
-            llm=LLM(model="ollama/llama3.2:3b", base_url="http://localhost:11434"),
+            llm=llm
+
         )
 
     # To learn more about structured task outputs,

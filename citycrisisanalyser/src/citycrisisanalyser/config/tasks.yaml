@@ -23,12 +23,13 @@ situation_interpreter_task:
 protocol_mapper_task:
   description: >
     [IMPORTANT : Tu dois répondre uniquement en français.]
-    À partir d'un résumé détaillé de la crise et en utilisant un document de référence complet contenant des protocoles de gestion de crise PLAN_DE_GESTION_DE_CRISE.pdf, identifier et récupérer les interventions les plus pertinentes et adaptées à la situation actuelle.
+    À partir d'un résumé détaillé de la crise et en utilisant uniquement un document de référence complet contenant des protocoles de gestion de crise (PLAN_DE_GESTION_DE_CRISE.pdf), identifier et récupérer les interventions les plus pertinentes et adaptées à la situation actuelle.
     Cette tâche implique de faire correspondre de manière sémantique la situation actuelle à des cas documentés similaires, en tenant compte des nuances et des spécificités du contexte, et d'extraire les étapes d'action les plus appropriées et efficaces.
+    Il est interdit d'utiliser des connaissances hors du document.
     Il est crucial de prendre en compte les ressources disponibles, les contraintes logistiques et les priorités opérationnelles pour une réponse optimale.
   expected_output: >
-    Une liste détaillée et justifiée des interventions les plus pertinentes, tirées du document de référence et adaptées au scénario de crise spécifique détecté.
-    Ces interventions doivent être clairement décrites, accompagnées de justifications approfondies basées sur les protocoles établis et les meilleures pratiques, en tenant compte des spécificités de la situation actuelle.
+    Une liste détaillée et justifiée des interventions les plus pertinentes, tirées exclusivement du document de référence et adaptées au scénario de crise spécifique détecté.
+    Ces interventions doivent être clairement décrites, accompagnées de justifications approfondies basées sur les protocoles établis dans le PDF.
   agent: protocol_mapper
 
 intervention_planner_task:
