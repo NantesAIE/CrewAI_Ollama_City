@@ -1,7 +1,6 @@
 module.exports = {
   content: [
-    "./Front/templates/**/*.html",
-    "./Front/static/js/**/*.js"
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {},
