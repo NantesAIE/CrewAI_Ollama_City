@@ -1,0 +1,43 @@
+vision_analyst_task:
+  description: >
+    "Voici une description générée d'une image :\n"
+            f"{result}\n"
+            "Améliore cette description en ajoutant plus de détails pertinents et en la rendant plus fluide."
+  expected_output: >
+    Une description détaillée, factuelle et complète de tous les éléments visuellement identifiables dans la photo.
+    Cette description doit permettre à une personne de reconstituer fidèlement la scène à partir des seuls détails observés.
+  agent: vision_analyst
+
+
+situation_interpreter_task:
+  description: >
+    Interpréter de manière approfondie les éléments visuels fournis par l'analyse de l'image pour produire un résumé complet et détaillé de la situation de crise globale, exprimé en langage naturel.
+    Ce résumé doit inclure une évaluation approfondie de la nature de l'événement, en identifiant les causes probables et les dynamiques en jeu.
+    Il est essentiel d'intégrer les indices de localisation, si disponibles, pour situer géographiquement la crise, ainsi que d'évaluer les risques potentiels et de déterminer le niveau d'urgence de manière précise.
+    L'interprétation doit également prendre en compte les conditions environnementales, les ressources disponibles et les actions en cours pour une compréhension complète de la situation.
+  expected_output: >
+    Un résumé détaillé et structuré de la situation interprétée, mettant en évidence une évaluation complète du type de crise, une localisation géographique précise (si déduite), une évaluation de la gravité et une analyse des indices contextuels.
+    Ce résumé doit être clair, structuré et exhaustif, fournissant une compréhension approfondie de la situation pour faciliter la prise de décision stratégique et opérationnelle.
+  agent: situation_interpreter
+
+protocol_mapper_task:
+  description: >
+    [IMPORTANT : Tu dois répondre uniquement en français.]
+    À partir d'un résumé détaillé de la crise et en utilisant uniquement un document de référence complet contenant des protocoles de gestion de crise (PLAN_DE_GESTION_DE_CRISE.pdf), identifier et récupérer les interventions les plus pertinentes et adaptées à la situation actuelle.
+    Cette tâche implique de faire correspondre de manière sémantique la situation actuelle à des cas documentés similaires, en tenant compte des nuances et des spécificités du contexte, et d'extraire les étapes d'action les plus appropriées et efficaces.
+    Il est interdit d'utiliser des connaissances hors du document.
+    Il est crucial de prendre en compte les ressources disponibles, les contraintes logistiques et les priorités opérationnelles pour une réponse optimale.
+  expected_output: >
+    Une liste détaillée et justifiée des interventions les plus pertinentes, tirées exclusivement du document de référence et adaptées au scénario de crise spécifique détecté.
+    Ces interventions doivent être clairement décrites, accompagnées de justifications approfondies basées sur les protocoles établis dans le PDF.
+  agent: protocol_mapper
+
+intervention_planner_task:
+  description: >
+    Sur la base de l'analyse détaillée de la crise identifiée et les protocoles correspondants, élaborer un plan d'intervention complet, priorisé et structuré, adapté aux besoins spécifiques de la situation.
+    Ce plan doit organiser de manière stratégique les interventions par ordre d'urgence et d'importance, en tenant compte des ressources disponibles, des contraintes logistiques et des objectifs opérationnels.
+    Chaque étape du plan doit être accompagnée de justifications approfondies, basées sur une évaluation complète des besoins, des risques et des priorités, pour assurer une réponse efficace et coordonnée à la crise.
+  expected_output: >
+    Un plan d'intervention détaillé, complet et priorisé, avec chaque étape incluant une description claire de l'action à entreprendre, une justification approfondie et une évaluation des ressources nécessaires.
+    Ce plan doit être structuré de manière logique et facile à suivre pour les équipes sur le terrain, assurant une réponse efficace, coordonnée et adaptée aux besoins spécifiques de la crise.
+  agent: intervention_planner
