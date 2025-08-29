@@ -51,11 +51,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        working-directory: /home/runner/work/CrewAI_Ollama_City/citycrisisanalyser/front
+        working-directory: citycrisisanalyser/front
         run:  npm install
 
       - name: Build
-        working-directory: /home/runner/work/CrewAI_Ollama_City/citycrisisanalyser/front
+        working-directory: citycrisisanalyser/front
         run:  npm run build
 
   deploy:
