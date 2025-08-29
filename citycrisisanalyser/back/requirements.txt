@@ -1,0 +1,3 @@
+# Dépendances Python pour Azure Web App
+fastapi
+# Ajoute d'autres dépendances si besoin
