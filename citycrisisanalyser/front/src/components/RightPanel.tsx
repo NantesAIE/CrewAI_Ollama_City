@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import GlassSurface from './bits/GlassSurface';
+import { useState } from 'react';
 import Accordion from './Accordion';
 
 interface RightPanelProps {
