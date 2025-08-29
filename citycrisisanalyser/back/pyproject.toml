@@ -21,3 +21,15 @@ build-backend = "hatchling.build"
 
 [tool.crewai]
 type = "crew"
+
+[tool.poetry]
+name = "citycrisisanalyser"
+version = "0.1.0"
+description = "Analyseur de crise urbaine"
+authors = ["Votre Nom <email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+# Ajoutez ici vos dépendances
+
+[tool.poetry.dev-dependencies]
