@@ -1,3 +1,15 @@
+[tool.poetry]
+name = "citycrisisanalyser-back"
+version = "0.1.0"
+description = "Backend du projet City Crisis Analyser"
+authors = ["NantesAIE <contact@nantesaie.fr>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+
 [project]
 name = "citycrisisanalyser"
 version = "0.1.0"
@@ -21,15 +33,3 @@ build-backend = "hatchling.build"
 
 [tool.crewai]
 type = "crew"
-
-[tool.poetry]
-name = "citycrisisanalyser"
-version = "0.1.0"
-description = "Analyseur de crise urbaine"
-authors = ["Votre Nom <email@example.com>"]
-
-[tool.poetry.dependencies]
-python = "^3.12"
-# Ajoutez ici vos dépendances
-
-[tool.poetry.dev-dependencies]
