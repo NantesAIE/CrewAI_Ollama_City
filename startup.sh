@@ -1,0 +1,1 @@
+fastapi run main_api.py
