@@ -1,1 +1,1 @@
-fastapi run main_api.py
+python back/main_api.py
