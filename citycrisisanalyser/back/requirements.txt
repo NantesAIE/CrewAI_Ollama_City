@@ -1,3 +1,4 @@
 # Dépendances Python pour Azure Web App
 fastapi
+poetry
 # Ajoute d'autres dépendances si besoin
