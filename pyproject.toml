@@ -7,3 +7,15 @@ requires-python = ">=3.12"
 dependencies = [
     "crewai>=0.140.0",
 ]
+
+[tool.poetry]
+name = "citycrisisanalyser-back"
+version = "0.1.0"
+description = "Backend du projet City Crisis Analyser"
+authors = ["NantesAIE <contact@nantesaie.fr>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
