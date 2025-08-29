@@ -51,14 +51,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: |
-          cd citycrisisanalyser/front
-          npm install
+        run:  npm install
 
       - name: Build
-        run: |
-          cd citycrisisanalyser/front
-          npm run build
+        run:  npm run build
 
   deploy:
     runs-on: ubuntu-latest
