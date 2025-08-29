@@ -1,1 +1,1 @@
-python back/main_api.py
+python citycrisisanalyser/back/main_api.py
