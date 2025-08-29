@@ -7,7 +7,7 @@ name: Build and deploy Python app to Azure Web App - AIE-CityCrisisAnalyser
 on:
   push:
     branches:
-      - master
+      - AzureVersion
   workflow_dispatch:
 
 jobs:
