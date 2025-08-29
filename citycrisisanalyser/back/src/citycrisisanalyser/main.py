@@ -4,7 +4,7 @@ import warnings
 
 from datetime import datetime
 
-from citycrisisanalyser.crew import Citycrisisanalyser
+from citycrisisanalyser.crew import Citycrisisanalyser ,run_gpt4o_vision
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
@@ -12,6 +12,11 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 # crew locally, so refrain from adding unnecessary logic into this file.
 # Replace with inputs you want to test with, it will automatically
 # interpolate any tasks and agents information
+image_path = "images/ma_crise.jpg" 
+
+prompt = "Décris ce que tu vois dans l'image."
+result = run_gpt4o_vision(prompt, image_path)
+
 
 def run():
     """
@@ -19,7 +24,9 @@ def run():
     """
     inputs = {
         'topic': 'AI LLMs',
-        'current_year': str(datetime.now().year)
+        'current_year': str(datetime.now().year),
+        'image_path': image_path,
+        'result': result
     }
     
     try:

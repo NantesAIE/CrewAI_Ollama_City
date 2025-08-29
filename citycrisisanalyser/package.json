@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "gsap": "^3.13.0",
+    "react-markdown": "^10.1.0"
+  }
+}
