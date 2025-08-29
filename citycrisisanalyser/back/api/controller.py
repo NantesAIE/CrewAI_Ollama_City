@@ -1,19 +1,21 @@
-# from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 # from api.schema import ImageInput, AnalysisOutput, AgentResponse
 # from citycrisisanalyser.crew import Citycrisisanalyser, encode_image_base64, run_llava_ollama
-# import base64
-# import os
-# import uuid
-# import traceback 
+import base64
+import os
+import uuid
+import traceback 
 
-# def get_output_by_task_name(tasks_output, task_name):
-#     for task in tasks_output:
-#         if task.name == task_name:
-#             return task.raw
-#     return "Aucune sortie trouvée"
+def get_output_by_task_name(tasks_output, task_name):
+    for task in tasks_output:
+        if task.name == task_name:
+            return task.raw
+    return "Aucune sortie trouvée"
 
-
-# router = APIRouter()
+app = FastAPI()
+router = APIRouter()
 
 # @router.post("/analyze", response_model=AnalysisOutput)
 # async def analyze_crisis_image(input_data: ImageInput):
@@ -76,6 +78,25 @@
 #         raise HTTPException(status_code=500, detail=f"Erreur interne: {str(e)}")
 
 
-# @router.get("/analyze")
-# async def analyze_placeholder():
-#     return {"message": "Utilisez POST /api/analyze pour envoyer une image à analyser."}
+@router.get("/analyze")
+async def analyze_placeholder():
+    return {"message": "Utilisez POST /api/analyze pour envoyer une image à analyser."}
+
+
+@router.get("/")
+async def serve_index():
+    index_path = os.path.join(os.path.dirname(__file__), "..", "..", "front", "build", "index.html")
+    index_path = os.path.abspath(index_path)
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    raise HTTPException(status_code=404, detail="Frontend non trouvé")
+
+@router.get("/{full_path:path}", include_in_schema=False)
+async def serve_react_app(full_path: str):
+    path = os.path.join(frontend_dir, full_path)
+    if os.path.exists(path) and os.path.isfile(path):
+        return FileResponse(path)
+    raise HTTPException(status_code=404, detail="Fichier non trouvé")
+
+frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "front", "build"))
+app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
