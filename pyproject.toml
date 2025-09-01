@@ -18,6 +18,8 @@ authors = ["NantesAIE <contact@nantesaie.fr>"]
 python = "^3.12"
 fastapi = "^0.110.0"
 uvicorn = "^0.29.0"
+crewai_tools = "*"
+
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0"

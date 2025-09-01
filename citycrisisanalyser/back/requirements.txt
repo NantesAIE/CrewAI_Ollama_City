@@ -1,5 +1,5 @@
-# Dépendances Python pour Azure Web App
 fastapi
 poetry
 uvicorn
-# Ajoute d'autres dépendances si besoin
+crewai_tools
+dotenv

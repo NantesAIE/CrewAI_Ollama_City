@@ -71,7 +71,7 @@ pdf_search_tool = PDFSearchTool(
     config=dict( 
         llm=dict(
             config=dict(
-                model=f"azure/gpt-4o", 
+                model=f"azure/gpt-4o",
                 api_key=AZURE_API_KEY,
                 base_url=AZURE_API_BASE, 
             ), 
