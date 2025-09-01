@@ -51,12 +51,7 @@ jobs:
         with:
           name: python-app
           path: |
-            citycrisisanalyser/*
-            pyproject.toml
-            README.md
-            startup.sh
-            uv.lock
-            !venv/
+            *
 
   deploy:
     runs-on: ubuntu-latest
