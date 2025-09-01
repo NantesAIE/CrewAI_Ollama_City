@@ -40,7 +40,15 @@ jobs:
         with:
           name: python-app
           path: |
-            .
+            citycrisisanalyser/back
+            citycrisisanalyser/front/build
+            citycrisisanalyser/front/package.json
+            citycrisisanalyser/front/node_modules
+            citycrisisanalyser/front/public
+            pyproject.toml
+            README.md
+            startup.sh
+            uv.lock
             !venv/
 
       - name: Set up Node.js ${{ matrix.node-version }}
