@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+/citycrisisanalyser/back/db
 
 # Virtual environments
 .venv
