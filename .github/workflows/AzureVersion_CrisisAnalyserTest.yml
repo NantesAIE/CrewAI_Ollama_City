@@ -31,7 +31,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: docker.io/${{ secrets.AzureAppService_ContainerUsername_6ca8b114f64044429a6fd079fd1ab522 }}/capgeminiaienantes/citycrisisanalyser:${{ github.sha }}
+        tags: docker.io/${{ secrets.AzureAppService_ContainerUsername_6ca8b114f64044429a6fd079fd1ab522 }}/citycrisisanalyser:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -49,4 +49,4 @@ jobs:
         app-name: 'CrisisAnalyserTest'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_02b57b0106124deb9358d912f4cd44ec }}
-        images: 'docker.io/${{ secrets.AzureAppService_ContainerUsername_6ca8b114f64044429a6fd079fd1ab522 }}/capgeminiaienantes/citycrisisanalyser:${{ github.sha }}'
+        images: 'docker.io/${{ secrets.AzureAppService_ContainerUsername_6ca8b114f64044429a6fd079fd1ab522 }}/citycrisisanalyser:${{ github.sha }}'
