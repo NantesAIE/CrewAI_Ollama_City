@@ -3,7 +3,7 @@ name = "crewai-ollama-city"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = "3.12.10"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "crewai>=0.140.0",
 ]
@@ -15,11 +15,10 @@ description = "Backend du projet City Crisis Analyser"
 authors = ["NantesAIE <contact@nantesaie.fr>"]
 
 [tool.poetry.dependencies]
-python = "3.12.10"
+python = ">=3.12,<3.13"
 fastapi = "^0.110.0"
 uvicorn = "^0.29.0"
 crewai_tools = "0.60.0"
-
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0"
