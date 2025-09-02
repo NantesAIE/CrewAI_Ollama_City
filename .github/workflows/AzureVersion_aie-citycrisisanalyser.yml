@@ -52,6 +52,7 @@ jobs:
           name: python-app
           path: |
             *
+            citycrisisanalyser/back/.env
 
   deploy:
     runs-on: ubuntu-latest

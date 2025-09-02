@@ -1,6 +1,9 @@
 import sys
-import pysqlite3
-sys.modules["sqlite3"] = pysqlite3
+try:
+    import pysqlite3
+    sys.modules["sqlite3"] = pysqlite3
+except ImportError:
+    pass  # en local Windows on garde sqlite3 standard
 from fastapi import FastAPI
 from api.controller import router
 import uvicorn
