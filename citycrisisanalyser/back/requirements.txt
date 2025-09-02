@@ -3,3 +3,4 @@ poetry
 uvicorn
 crewai_tools
 dotenv
+pysqlite3-binary
