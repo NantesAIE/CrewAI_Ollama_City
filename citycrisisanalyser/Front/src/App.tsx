@@ -55,7 +55,6 @@ export default function App() {
           onRunAnalysis={handleRunAnalysis}
         />
         <MiddlePanel
-          svgRef={svgRef}
             agentRefs={agentRefs}
             agentStates={agentStates}
             barStates={barStates}

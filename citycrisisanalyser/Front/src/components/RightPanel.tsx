@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import GlassSurface from './bits/GlassSurface';
 import Accordion from './Accordion';
+import ExportPDFButton from './EportPDFButton';
+
 
 interface RightPanelProps {
   responses: Record<string, string>;
@@ -24,7 +25,7 @@ export default function RightPanel({ responses }: RightPanelProps) {
   ];
 
   return (
-    <section className="flex-1 min-w-0 flex flex-col gap-4 sm:gap-6 rounded-[16px] shadow-xl p-2 sm:p-4 md:p-6 items-center w-full bg-transparent">
+    <section className="flex-1 min-w-0 flex flex-col gap-4 sm:gap-6 rounded-[16px] p-2 sm:p-4 md:p-6 items-center w-full bg-transparent">
       <div className="divide-y divide-[#90caf9]/30 flex-1 min-h-0 w-full h-full overflow-y-auto">
         {accordions.map((acc, idx) => (
           <Accordion
@@ -36,6 +37,7 @@ export default function RightPanel({ responses }: RightPanelProps) {
           />
         ))}
       </div>
+      <ExportPDFButton responses={responses} />
     </section>
   );
 }

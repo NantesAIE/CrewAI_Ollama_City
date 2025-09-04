@@ -57,7 +57,7 @@ export default function LeftPanel({
   };
 
   return (
-    <section className="flex-1 min-w-0 flex flex-col gap-4 sm:gap-6 rounded-[16px] shadow-xl p-2 sm:p-4 md:p-6 items-center w-full bg-transparent">
+    <section className="flex-1 min-w-0 flex flex-col gap-4 sm:gap-6 rounded-[16px] p-2 sm:p-4 md:p-6 items-center w-full bg-transparent">
       <div
         onDrop={handleDrop}
         onDragOver={e => e.preventDefault()}
