@@ -1,20 +1,19 @@
+<<<<<<< HEAD:citycrisisanalyser/Front/src/components/RightPanel.tsx
+// RightPanel.tsx
+import React, { useState } from 'react';
+=======
 import { useState } from 'react';
+>>>>>>> origin/AzureVersion:citycrisisanalyser/front/src/components/RightPanel.tsx
 import Accordion from './Accordion';
+import ExportPDFButton from './EportPDFButton';
 
 interface RightPanelProps {
   responses: Record<string, string>;
+  selectedImage: string | null; // Ajout de la prop
 }
 
-const ACCORDION_KEYS = [
-  'vision',
-  'situation',
-  'protocol',
-  'intervention',
-];
-
-export default function RightPanel({ responses }: RightPanelProps) {
+export default function RightPanel({ responses, selectedImage }: RightPanelProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   const accordions = [
     { title: "Vision Analyst", content: responses.vision || '' },
     { title: "Situation Interpreter", content: responses.situation || '' },
@@ -23,7 +22,7 @@ export default function RightPanel({ responses }: RightPanelProps) {
   ];
 
   return (
-    <section className="flex-1 min-w-0 flex flex-col gap-4 sm:gap-6 rounded-[16px] shadow-xl p-2 sm:p-4 md:p-6 items-center w-full bg-transparent">
+    <section className="flex-1 min-w-0 flex flex-col gap-4 sm:gap-6 rounded-[16px] p-2 sm:p-4 md:p-6 items-center w-full bg-transparent">
       <div className="divide-y divide-[#90caf9]/30 flex-1 min-h-0 w-full h-full overflow-y-auto">
         {accordions.map((acc, idx) => (
           <Accordion
@@ -35,6 +34,10 @@ export default function RightPanel({ responses }: RightPanelProps) {
           />
         ))}
       </div>
+      <ExportPDFButton
+        responses={responses}
+        selectedImage={selectedImage} // Transmission de l'image
+      />
     </section>
   );
 }
