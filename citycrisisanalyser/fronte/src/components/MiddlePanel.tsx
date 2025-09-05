@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import '../../styles/MiddlePanel.css';
+import '../styles/MiddlePanel.css';
 
 const agentLabels = [
   'Vision analyst',
