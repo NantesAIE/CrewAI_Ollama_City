@@ -1,9 +1,5 @@
-<<<<<<< HEAD:citycrisisanalyser/Front/src/components/RightPanel.tsx
 // RightPanel.tsx
 import React, { useState } from 'react';
-=======
-import { useState } from 'react';
->>>>>>> origin/AzureVersion:citycrisisanalyser/front/src/components/RightPanel.tsx
 import Accordion from './Accordion';
 import ExportPDFButton from './EportPDFButton';
 
