@@ -1,22 +1,15 @@
+// RightPanel.tsx
 import React, { useState } from 'react';
 import Accordion from './Accordion';
 import ExportPDFButton from './EportPDFButton';
 
-
 interface RightPanelProps {
   responses: Record<string, string>;
+  selectedImage: string | null; // Ajout de la prop
 }
 
-const ACCORDION_KEYS = [
-  'vision',
-  'situation',
-  'protocol',
-  'intervention',
-];
-
-export default function RightPanel({ responses }: RightPanelProps) {
+export default function RightPanel({ responses, selectedImage }: RightPanelProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   const accordions = [
     { title: "Vision Analyst", content: responses.vision || '' },
     { title: "Situation Interpreter", content: responses.situation || '' },
@@ -37,7 +30,10 @@ export default function RightPanel({ responses }: RightPanelProps) {
           />
         ))}
       </div>
-      <ExportPDFButton responses={responses} />
+      <ExportPDFButton
+        responses={responses}
+        selectedImage={selectedImage} // Transmission de l'image
+      />
     </section>
   );
 }

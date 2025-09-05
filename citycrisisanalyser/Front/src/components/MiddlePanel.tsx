@@ -62,10 +62,11 @@ export default function MiddlePanel({ agentRefs, agentStates, barStates }: Middl
           style={{ left: 0, top: 0 }}
         >
           <defs>
-            <linearGradient id="bar-green" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#43A047" />
-              <stop offset="100%" stopColor="#39ff14" />
+            <linearGradient id="bar-purple" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="rgba(71, 25, 210, 0.793)" />
+              <stop offset="100%" stopColor="rgba(71, 25, 210, 0.793)" />
             </linearGradient>
+
           </defs>
           {/* Affichage des barres dès que les refs sont prêtes */}
           {isReady && centers.slice(1).map((agent, i) => {
@@ -95,7 +96,7 @@ export default function MiddlePanel({ agentRefs, agentStates, barStates }: Middl
                     y1={y1}
                     x2={x2}
                     y2={y2}
-                    stroke="url(#bar-green)"
+                    stroke="url(#bar-purple)"
                     strokeWidth={3}
                     opacity={0.95}
                     strokeLinecap="round"
@@ -109,7 +110,7 @@ export default function MiddlePanel({ agentRefs, agentStates, barStates }: Middl
 
         {/* Glow CSS avec animation fluide */}
         {isReady && centers.slice(1).map((agent, i) => {
-          if (barStates[i] !== 'loading') return null;
+          if (barStates[i] !== 'loading' && barStates[i] !== 'done') return null;
           const orchestrator = centers[0];
           const dx = agent.x - orchestrator.x;
           const dy = agent.y - orchestrator.y;
@@ -118,14 +119,17 @@ export default function MiddlePanel({ agentRefs, agentStates, barStates }: Middl
           const x1 = orchestrator.x;
           const y1 = orchestrator.y;
 
+          // Décalage vertical pour centrer la glow-bar sur la ligne SVG
+          const barHeight = 4; 
           return (
             <div
               key={`glow-${i}`}
-              className="glow-bar"
+              className={`glow-bar${barStates[i] === 'loading' ? ' active' : ''}`}
               style={{
                 width: `${length}px`,
                 left: `${x1}px`,
-                top: `${y1}px`,
+                top: `${y1 - barHeight / 2}px`, // centré sur la ligne
+                height: `${barHeight}px`,
                 transform: `rotate(${angle}rad)`,
                 transformOrigin: '0 0',
               }}

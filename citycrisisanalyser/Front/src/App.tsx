@@ -38,7 +38,6 @@ export default function App() {
     if (!currentFile) return;
     setIsLoading(true);
     // Logique d'appel API ou simulation ici
-    // Exemple : await fetchAnalysis(currentFile);
     setIsLoading(false);
   };
 
@@ -59,7 +58,7 @@ export default function App() {
             agentStates={agentStates}
             barStates={barStates}
         />
-        <RightPanel responses={agentResponses} />
+        <RightPanel responses={agentResponses} selectedImage={selectedImage}/>
       </main>
     </div>
   );

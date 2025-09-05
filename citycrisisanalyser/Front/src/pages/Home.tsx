@@ -114,7 +114,7 @@ export default function Home() {
             <MiddlePanel agentRefs={agentRefs} agentStates={agentStates} barStates={barStates} />
           </div>
           <div className="flex-1 min-w-0 flex flex-col">
-            <RightPanel responses={agentResponses} />
+            <RightPanel responses={agentResponses} selectedImage={selectedImage}/>
           </div>
         </main>
       </section>
