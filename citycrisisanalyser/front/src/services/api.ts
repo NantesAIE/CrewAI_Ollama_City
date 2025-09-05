@@ -5,7 +5,7 @@ export async function fetchAnalysis(file: File) {
     reader.readAsDataURL(file);
   }).then((data) => data.split(',')[1]);
 
-  const response = await fetch('http://localhost:3000/analyse', {
+  const response = await fetch('/analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ image_base64: base64, filename: file.name }),

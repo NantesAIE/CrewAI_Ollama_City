@@ -4,7 +4,7 @@ import warnings
 
 from datetime import datetime
 
-from citycrisisanalyser.crew import Citycrisisanalyser ,run_gpt4o_vision
+from src.citycrisisanalyser.crew import Citycrisisanalyser ,run_gpt4o_vision
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 

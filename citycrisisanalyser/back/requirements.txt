@@ -1,0 +1,6 @@
+fastapi
+poetry
+uvicorn
+crewai_tools
+dotenv
+pysqlite3-binary; sys_platform != "win32"
